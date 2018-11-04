@@ -18,7 +18,7 @@ app.use(function (req, res, next) {
   res.setHeader('Cache-Control', 'no-cache');
   next();
 });
-
+app.get('/ping', (req, res) => res.status(200).json({message: "API server is up and runnning"}));
 app.use('/company', companyRouter);
 app.use('/stock', stocksRouter);
 app.use('/user',userRouter);

@@ -56,7 +56,6 @@ export const getInterdayData = async (symbol, days,callback) => {
   }
 }
 export const getIntradayData = async (symbol, selectedDate,callback) => {
-  selectedDate = selectedDate;
   console.log({symbol, selectedDate});
   try{
     if(!symbol && !selectedDate) throw new Error("missing symbol or selectedDate");

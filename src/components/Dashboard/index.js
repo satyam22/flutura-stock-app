@@ -6,7 +6,7 @@ import Stock from './Stock';
 import { Link, Switch, Route } from 'react-router-dom';
 import { getAllCompanies, getAllSectors, getAllIndustries } from '../../api';
 import './../../App.css';
-const { Header, Content, Footer, Sider } = Layout;
+const { Content, Footer, Sider } = Layout;
 
 export default class Dashboard extends Component {
   constructor(props) {
