@@ -1,8 +1,7 @@
 import pool from './../db/pool';
-import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 const salt = bcrypt.genSaltSync(10);
-const { JWT_SECRET } = require('./../../config');
+
 const login = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password || password.length < 6)
