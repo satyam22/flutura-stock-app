@@ -1,4 +1,4 @@
-const { SERVER_URL } = require('./../../config');
+const { SERVER_URL } = require('./../config');
 const API_BASE_URL = SERVER_URL || 'http://localhost:3001';
 
 export const getAllCompanies = async (callback) => {
