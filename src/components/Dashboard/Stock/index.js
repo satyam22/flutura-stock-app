@@ -1,40 +1,33 @@
-import React, { Component }from 'react';
-import { Button } from 'antd';
-import {Link} from 'react-router-dom';
-import { getInterdayData } from './../../../api';
-import {Charts, ChartContainer, ChartRow, YAxis, LineChart } from 'react-timeseries-charts';
-import {TimeSeries} from 'pondjs';
+import React, { Component } from 'react';
+import { Link, Route, Switch } from 'react-router-dom';
+import { Button, Row, Col } from 'antd';
+import Interday from './Interday';
+import Intraday from './Intraday';
 
-export default class Stock extends Component{
-  constructor(props){
-    super(props);
-    this.state = {
-      interday:[],
-      days: 365
-    }
-  }
-  componentDidMount(){
-    const {symbol} = this.props.match.params;
-    const { days } = this.state;
-    if(symbol){
-      getInterdayData(symbol, days, (data) => {
-        console.log("Inter day data:: ", data);
-        this.setState({interday: data});
-      })
-    }
-  }
- render(){
-   const { interday } = this.state;
-   const data = {
-     name: "stock data",
-     columns: ["time", "open"],
-     points: interday.map(id => ([id.date, id.open]))
-   };
-   console.log("points:: ", data.points);
-   return (
-   <div>
-    <Button><Link to ='/dashboard'>Go To Dashboard</Link></Button>
-    </div>
+export default class Stock extends Component {
+
+  render() {
+    const { match } = this.props;
+
+    return (
+      <div>
+        <Row style={{ marginTop: '20px' }}>
+          <Col span={8} offset={4}>
+            <Button type="primary" block><Link to={`${match.url}/interday`}>Watch Interday Data </Link></Button>
+          </Col>
+          <Col span={8} offset={1}>
+            <Button type="primary" block><Link to={`${match.url}/intraday`}>Watch Intraday Data </Link></Button>
+          </Col>
+        </Row>
+        <div class="stock-content" style={{ margin: '5px', padding: '5px 10px' }}>
+          <Switch>
+            <Route path={`${match.path}/interday`} component={Interday} />
+            <Route path={`${match.path}/intraday`} component={Intraday} />
+            <Route path={`${match.path}`} render={() => <h3>Please select one of above categories </h3>} />
+          </Switch>
+        </div>
+      </div>
     )
- } 
+  }
 }
+

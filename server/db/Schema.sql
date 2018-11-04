@@ -9,6 +9,7 @@ CREATE TABLE `companies` (
   `industry` varchar(200) NOT NULL,
   PRIMARY KEY (`symbol`)
 )
+
 CREATE TABLE `time_series_daily` (
   `date` date NOT NULL,
   `open` float(20,4) NOT NULL,
@@ -17,7 +18,7 @@ CREATE TABLE `time_series_daily` (
   `close` float(20,4) NOT NULL,
   `volume` int(11) NOT NULL,
   `symbol` varchar(10) NOT NULL,
-  PRIMARY KEY (`date`),
+  PRIMARY KEY (`date`,`symbol`),
   KEY `symbol` (`symbol`),
   CONSTRAINT `time_series_daily_ibfk_1` FOREIGN KEY (`symbol`) REFERENCES `companies` (`symbol`)
 )
@@ -30,7 +31,7 @@ CREATE TABLE `time_series_intraday` (
   `close` float(20,4) NOT NULL,
   `volume` int(11) NOT NULL,
   `symbol` varchar(10) NOT NULL,
-  PRIMARY KEY (`timestamp`),
+  PRIMARY KEY (`timestamp`,`symbol`),
   KEY `symbol` (`symbol`),
   CONSTRAINT `time_series_intraday_ibfk_1` FOREIGN KEY (`symbol`) REFERENCES `companies` (`symbol`)
 )
@@ -43,3 +44,10 @@ create table user(
 `aboutMe` varchar(500),
 primary key(`email`)
 )
+
+create table token(
+  `email` varchar(100) not null,
+  `token` varchar(400) not null,
+  `createdAt` date not null,
+  primary key(`email`,`token`)
+);

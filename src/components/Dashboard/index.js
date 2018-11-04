@@ -1,32 +1,23 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import { getAllCompanies, getAllSectors, getAllIndustries } from '../../api';
-import { Table, Input, Button, Icon } from 'antd';
+import { Layout, Menu, Icon } from 'antd';
+import Companies from './Companies';
+import Stock from './Stock';
 
-class Dashboard extends Component {
+import { Link, Switch, Route } from 'react-router-dom';
+import { getAllCompanies, getAllSectors, getAllIndustries } from '../../api';
+import './../../App.css';
+const { Header, Content, Footer, Sider } = Layout;
+
+export default class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
       companies: [],
-      searchSymbolText: '',
-      searchNameText: '',
       sectors: [],
-      industries: []
+      industries: [],
+      collapsed: false
     };
   }
-
-  handleSearch = (selectedKeys, confirm, filter) => () => {
-    confirm();
-    if (filter === 'symbol') this.setState({ searchSymbolText: selectedKeys[0] });
-    if (filter === 'name') this.setState({ searchNameText: selectedKeys[0] });
-  }
-
-  handleReset = (clearFilters, filter) => () => {
-    clearFilters();
-    if (filter === 'symbol') this.setState({ searchSymbolText: '' });
-    if (filter === 'name') this.setState({ searchNameText: '' });
-  }
-
   componentDidMount() {
     getAllCompanies((data) => {
       this.setState({ companies: data });
@@ -40,87 +31,53 @@ class Dashboard extends Component {
       this.setState({ industries: data });
     })
   }
-
+  onCollapse = (collapsed) => {
+    console.log(collapsed);
+    this.setState({ collapsed });
+  }
   render() {
     const { companies, sectors, industries } = this.state;
-    const columns = [{
-      title: 'Symbol',
-      dataIndex: 'symbol',
-      key: 'symbol',
-      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) =>
-        (
-          <div className="custom-filter-dropdown">
-            <Input
-              ref={ele => this.searchInput = ele}
-              placeholder="Search symbol"
-              value={selectedKeys[0]}
-              onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-              onPressEnter={this.handleSearch(selectedKeys, confirm, 'symbol')}
-            />
-            <Button type="primary" onClick={this.handleSearch(selectedKeys, confirm, 'symbol')} >Search</Button>
-            <Button onClick={this.handleReset(clearFilters, 'symbol')}>Reset</Button>
-          </div>
-        ),
-      filterIcon: filtered => <Icon type='search' style={{ color: filtered ? '#108ee9' : '#aaa' }} />,
-      onFilter: (value, record) => record.symbol.toLowerCase().includes(value.toLowerCase()),
-      width: '100px',
-      render: text => <Link to={`${this.props.match.url}/${text}`}>{text}</Link>
-    },
-    {
-      title: 'Name',
-      dataIndex: 'name',
-      key: 'name',
-      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) =>
-        (
-          <div className="custom-filter-dropdown">
-            <Input
-              ref={ele => this.searchInput = ele}
-              placeholder="Search name"
-              value={selectedKeys[0]}
-              onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-              onPressEnter={this.handleSearch(selectedKeys, confirm, 'name')}
-            />
-            <Button type="primary" onClick={this.handleSearch(selectedKeys, confirm, 'name')} >Search</Button>
-            <Button onClick={this.handleReset(clearFilters, 'name')}>Reset</Button>
-          </div>
-        ),
-      filterIcon: filtered => <Icon type='search' style={{ color: filtered ? '#108ee9' : '#aaa' }} />,
-      onFilter: (value, record) => record.name.toLowerCase().includes(value.toLowerCase()),
-      width: '250px'
-    },
-    {
-      title: 'Market Cap.',
-      dataIndex: 'marketcap',
-      key: 'marketcap',
-      sorter: (a, b) => (a.marketcap - b.marketcap),
-      width: '100px'
-    },
-    {
-      title: 'Sector',
-      dataIndex: 'sector',
-      key: 'sector',
-      width: '150px',
-      filters: sectors.map(sector => ({ text: sector, value: sector })),
-      onFilter: (value, record) => record.sector.includes(value)
-    },
-    {
-      title: 'Industry',
-      dataIndex: 'industry',
-      key: 'industry',
-      width: '150px',
-      filters: industries.map(industry => ({ text: industry, value: industry })),
-      onFilter: (value, record) => record.industry.includes(value)
-
-    }
-    ]
+    const { match } = this.props;
     return (
-      <div className="dashboard">
-        <Table dataSource={companies}
-         columns={columns}
-         className="company-table"
-        />
-      </div>
+      <Layout style={{ minHeight: '100vh' }}>
+        <Sider
+          collapsible
+          collapsed={this.state.collapsed}
+          onCollapse={this.onCollapse}
+        >
+          <div className="sidebar-logo" >STOCKS APP</div>
+          <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
+            <Menu.Item key="1">
+            <Icon type="pie-chart"></Icon>
+              <Link to ={`${match.path}`} >All Companies</Link>
+            </Menu.Item>
+            <Menu.Item key="2">
+              <Icon type="desktop" />
+              <span>Intraday</span>
+            </Menu.Item>
+            <Menu.Item key="3">
+              <Icon type="desktop" />
+              <span>Interday</span>
+            </Menu.Item>
+          </Menu>
+        </Sider>
+        <Layout>
+          <Content>
+            <Switch>
+              <Route exact path={`${match.path}`} render={
+                () => <Companies companies={companies}
+                  sectors={sectors}
+                  industries={industries}
+                  match={this.props.match} />
+                  } />
+                <Route path={`${match.path}/:symbol`} component={Stock} />
+            </Switch>
+          </Content>
+          <Footer style={{ textAlign: 'center' }}>
+            Created By: Satyam Bansal
+            </Footer>
+        </Layout>
+      </Layout>
     );
   }
 }
-export default Dashboard;

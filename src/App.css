@@ -1,7 +1,8 @@
 @import '~antd/dist/antd.css';
 .App {
   text-align: center;
-  width: 100%;
+  width: 100vh;
+  height: 100vh;
 }
 
 .App-link {
@@ -27,9 +28,7 @@
   color: #f50;
 }
 .ant-table td { white-space: nowrap; }
-.company-table {
-  
-}
+
 .ant-pagination{
   margin: 0;
   padding: 0;
@@ -37,4 +36,19 @@
 .dashboard{
   margin: 0;
   padding: 0;
+}
+.sidebar-logo {
+  height: 32px;
+  background: rgba(255,255,255,.2);
+  margin: 16px;
+  text-align: center;
+  color: #222;
+  font-weight: bold;
+}
+.spinner{
+  margin-left: 50%;
+  margin-top: 20%;
+}
+.all-companies{
+  color: white
 }

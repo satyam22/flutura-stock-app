@@ -1,17 +1,20 @@
 import React, { Component } from 'react';
 import { Form, Icon, Input, Button } from 'antd';
-import { userLogin } from './../../api';
+import { userSignup } from './../../api';
 import { Link, Redirect } from 'react-router-dom';
 
 const FormItem = Form.Item;
 
-class SignIn extends Component {
+class SignUp extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      firstName:'',
+      lastName:'',
       email: '',
       password: '',
-      authorized: false
+      aboutMe:'',
+      success: false
     };
   }
   handleSubmit = (e) => {
@@ -19,16 +22,8 @@ class SignIn extends Component {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         console.log('Received values of form: ', values);
-        userLogin(values, ({authorized, firstName, lastName, email, aboutMe }) => {
-          if(authorized === true){
-            // This is not the correct way to do authentication,. but due to lake of time I need this working
-            // functionality. thats why I'm following this insecure approach.
-            localStorage.setItem('authorized','true');
-            localStorage.setItem('firstName',firstName);
-            localStorage.setItem('lastName',lastName);
-            localStorage.setItem('aboutMe',aboutMe);
-            this.setState({ authorized:true });
-          }
+        userSignup(values, ({success}) => {
+          if(success === true) this.setState({ success:true })
         })
       }
     });
@@ -36,10 +31,22 @@ class SignIn extends Component {
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { authorized } = this.state;
-    return authorized === true ? (<Redirect to='/dashboard' />) : (
+    const { success } = this.state;
+    return success === true ? (<Redirect to='/signin' />) : (
       <div style={{ width: '400px', margin: 'auto', marginTop: '100px' }}>
-        <Form onSubmit={this.handleSubmit} className="login-form">
+        <Form onSubmit={this.handleSubmit} className="signup-form">
+        <FormItem>
+            {getFieldDecorator('firstName', {
+              rules: [{ required: true, message: 'Please input your first name!' }],
+            })(
+              <Input placeholder="First Name" type="text"/>
+            )}
+          </FormItem>
+          <FormItem>
+            {getFieldDecorator('lastName')(
+              <Input placeholder="Last Name" />
+            )}
+          </FormItem>
           <FormItem>
             {getFieldDecorator('email', {
               rules: [{ required: true, message: 'Please input your email!' }],
@@ -55,10 +62,15 @@ class SignIn extends Component {
             )}
           </FormItem>
           <FormItem>
-            <Button type="primary" htmlType="submit" className="login-form-button">
-              Log in
+            {getFieldDecorator('aboutMe')(
+              <Input placeholder="About Me" />
+            )}
+          </FormItem>
+          <FormItem>
+            <Button type="primary" htmlType="submit" className="signup-form-button">
+              Sign Up
           </Button>
-            Or <Link to='/signup'>Signup Now !</Link>
+            Or <Link to='/signin'>Signin Now !</Link>
           </FormItem>
         </Form>
       </div >
@@ -66,4 +78,4 @@ class SignIn extends Component {
   }
 }
 
-export default Form.create()(SignIn);
+export default Form.create()(SignUp);
